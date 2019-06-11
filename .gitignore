@@ -1,0 +1,17 @@
+__pycache__
+*.py[cod]
+env_*
+i_*.py
+
+data/raw/**
+!data/raw/.placeholder
+
+test/data/raw/**
+
+logs/*
+!logs/.placeholder
+
+lib/encodings/**
+!lib/encodings/encodings.py
+
+TODO

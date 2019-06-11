@@ -1,0 +1,9 @@
+numpy
+dlib
+opencv-python
+pandas
+tensorflow
+imutils
+Flask==1.0.2
+Flask-Testing==0.7.1
+gevent==1.4.0

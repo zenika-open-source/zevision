@@ -2,7 +2,7 @@ import sys
 from imutils import paths
 import cv2
 import dlib
-sys.path.insert(0, '/home/bendidiihab/ihabgit/zihub')
+sys.path.insert(0, '/home/ihab/ihabgit/zevision')
 
 
 import lib.predict as predict

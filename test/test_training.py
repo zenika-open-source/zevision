@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(0, '/home/bendidiihab/ihabgit/zihub')
+sys.path.insert(0, '/home/ihab/ihabgit/zevision')
 
 
 import lib.train as train

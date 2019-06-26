@@ -142,7 +142,7 @@ def save_image(image_path,drawn_image,path_to_results=""):
     cv2.imwrite(path_to_results + image_name + ".jpg", drawn_image)
 
 
-def recognize_frame(frame,method="hog",encoding_path=default_path_encodings)
+def recognize_frame(frame,method="hog",encoding_path=default_path_encodings):
     if encoding_path == codes.default_encodings :
         data = default_encoding_data
     else :

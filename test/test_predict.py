@@ -11,5 +11,5 @@ for image in imagePaths:
     
     response = predict.recognize_face(image)
     test_image = cv2.imread(image)
-    test_image = draw_boxes(test_image,response)
-    save_image(image,test_image,"results/")
+    test_image = predict.draw_boxes(test_image,response)
+    predict.save_image(image,test_image,"results/")

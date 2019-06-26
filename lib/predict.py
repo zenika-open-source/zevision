@@ -183,7 +183,7 @@ def recognize_camera (src=0,method="hog",encoding_path=default_path_encodings):
     while True:
         # grab the frame from the threaded video stream
         frame = vs.read()
-        response = predict.recognize_frame(frame)
+        response = recognize_frame(frame)
         draw_boxes(frame,response)
         cv2.imshow("Frame", frame)
         key = cv2.waitKey(1) & 0xFF

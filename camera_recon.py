@@ -19,7 +19,7 @@ while True:
     # grab the frame from the threaded video stream
     i += 1
     frame = vs.read()
-    image_path = "resources/video/"+ i + ".jpg"
+    image_path = "resources/video/"+ str(i) + ".jpg"
     cv2.imwrite(image_path, frame)
     response = predict.recognize_face(image_path)
     for (i,r) in enumerate(response):

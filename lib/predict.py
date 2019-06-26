@@ -1,4 +1,4 @@
-from imutils import paths
+import imutils 
 import dlib
 import cv2
 import os

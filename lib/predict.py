@@ -170,12 +170,17 @@ def recognize_face(image,method="hog",encoding_path=default_path_encodings):
 
 
 
-#Add option in method for video recording with Writer
-def recognize_camera (src=0,method="hog",encoding_path=default_path_encodings):
+
+def recognize_camera (src=0,method="hog",encoding_path=default_path_encodings,record_path=None):
     # initialize the video stream, then allow the camera sensor to warm up
     print("[INFO] starting video stream...")
     vs = VideoStream(src).start()
     writer = None
+    if record != None:
+        fourcc = cv2.VideoWriter_fourcc(*"MJPG")
+        writer = cv2.VideoWriter(record_path, fourcc, 20,(frame.shape[1], frame.shape[0]), True)
+
+
     time.sleep(2.0)
     # start the FPS throughput estimator
     #fps = FPS().start()
@@ -186,6 +191,9 @@ def recognize_camera (src=0,method="hog",encoding_path=default_path_encodings):
         response = recognize_frame(frame)
         draw_boxes(frame,response)
         cv2.imshow("Frame", frame)
+        # Write the video in a the zevision/test/results/
+        if record != None :
+            writer.write(frame)
         key = cv2.waitKey(1) & 0xFF
         # if the `q` key was pressed, break from the loop
         if key == ord("q"):

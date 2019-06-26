@@ -2,6 +2,8 @@ from imutils.video import VideoStream
 #from imutils.video import FPS
 import lib.predict as predict
 import time
+import cv2
+import dlib
 
 
 # initialize the video stream, then allow the camera sensor to warm up

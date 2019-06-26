@@ -176,11 +176,6 @@ def recognize_camera (src=0,method="hog",encoding_path=default_path_encodings,re
     print("[INFO] starting video stream...")
     vs = VideoStream(src).start()
     writer = None
-    if record_path != None:
-        fourcc = cv2.VideoWriter_fourcc(*"MJPG")
-        writer = cv2.VideoWriter(record_path, fourcc, 20,(frame.shape[1], frame.shape[0]), True)
-
-
     time.sleep(2.0)
     # start the FPS throughput estimator
     #fps = FPS().start()

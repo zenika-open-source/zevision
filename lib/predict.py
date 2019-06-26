@@ -183,7 +183,7 @@ def recognize_camera (src=0,method="hog",encoding_path=default_path_encodings,re
     frame = vs.read()
     if record_path != None:
         fourcc = cv2.VideoWriter_fourcc(*"MJPG")
-        writer = cv2.VideoWriter(record_path, fourcc, 20,(frame.shape[1], frame.shape[0]), True)
+        writer = cv2.VideoWriter(record_path, fourcc, 5,(frame.shape[1], frame.shape[0]), True)
     # loop over frames from the video file stream
     while True:
         # grab the frame from the threaded video stream

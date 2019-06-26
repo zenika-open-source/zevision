@@ -1,4 +1,4 @@
-import imutils 
+import imutils
 import dlib
 import cv2
 import os
@@ -49,7 +49,7 @@ def preprocess(image,method="hog"):
 # for frames in video, to process them without saving them
 def preprocess_frame(frame,method="hog"):
     processed_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    processed_frame = imutils.resize(processed_frame, width=300)
+    #processed_frame = imutils.resize(processed_frame, width=700)
     return processed_frame
 
 
@@ -125,7 +125,7 @@ def recognize(encodings, boxes,data):
 
 def draw_boxes(read_image,response):
     for (i,r) in enumerate(response):
-        print("\n \n the number ",i+1," prediction  is  :   ",r)
+        #print("\n \n the number ",i+1," prediction  is  :   ",r)
         box = dlib.rectangle(r["box"][3], r["box"][0], r["box"][1], r["box"][2])
         top = box.top()
         right = box.right()

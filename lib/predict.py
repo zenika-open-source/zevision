@@ -192,7 +192,9 @@ def recognize_camera (src=0,method="hog",encoding_path=default_path_encodings,re
         draw_boxes(frame,response)
         cv2.imshow("Frame", frame)
         # Write the video in a the zevision/test/results/
-        if record_path != None :
+        if record_path != None:
+            fourcc = cv2.VideoWriter_fourcc(*"MJPG")
+            writer = cv2.VideoWriter(record_path, fourcc, 20,(frame.shape[1], frame.shape[0]), True)
             writer.write(frame)
         key = cv2.waitKey(1) & 0xFF
         # if the `q` key was pressed, break from the loop

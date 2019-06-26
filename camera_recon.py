@@ -25,7 +25,7 @@ while True:
     cv2.imwrite(image_path, frame)
     response = predict.recognize_face(image_path)
     for (i,r) in enumerate(response):
-        print("\n \n the number ",i+1," prediction for ",image," is  :   ",r)
+        #print("\n \n the number ",i+1," prediction for ",image," is  :   ",r)
         box = dlib.rectangle(r["box"][3], r["box"][0], r["box"][1], r["box"][2])
         top = box.top()
         right = box.right()

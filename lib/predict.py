@@ -119,6 +119,25 @@ def recognize(encodings, boxes,data):
 	return response
 
 
+def draw_boxes(read_image,response):
+    for (i,r) in enumerate(response):
+        print("\n \n the number ",i+1," prediction  is  :   ",r)
+        box = dlib.rectangle(r["box"][3], r["box"][0], r["box"][1], r["box"][2])
+        top = box.top()
+        right = box.right()
+        bottom = box.bottom()
+        left = box.left()
+        cv2.rectangle(read_image, (left, top), (right, bottom), (0, 255, 0), 2)
+        y = top - 15 if top - 15 > 15 else top + 15
+        cv2.putText(read_image, r["category"], (left, y), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.75, (0, 255, 0), 2)
+    return read_image
+
+def save_image(image_path,drawn_image,path_to_results=""):
+    image_name = image_path.split("/")[-1].split(".")[0]
+    cv2.imwrite(path_to_results + image_name + ".jpg", drawn_image)
+
+
 
 
 

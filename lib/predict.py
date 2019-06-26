@@ -171,7 +171,7 @@ def recognize_face(image,method="hog",encoding_path=default_path_encodings):
 
 
 #Add option in method for video recording with Writer
-def recognize_camera (src=0,method="hog",encoding_path=default_path_encodings)):
+def recognize_camera (src=0,method="hog",encoding_path=default_path_encodings):
     # initialize the video stream, then allow the camera sensor to warm up
     print("[INFO] starting video stream...")
     vs = VideoStream(src).start()

@@ -16,7 +16,7 @@ i = 0
 # loop over frames from the video file stream
 while True:
     # grab the frame from the threaded video stream
-    i++
+    i += 1
     frame = vs.read()
     image_path = "resources/video/"+ i + ".jpg"
     cv2.imwrite(image_path, frame)

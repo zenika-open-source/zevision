@@ -18,9 +18,9 @@ TODO
 ### Library Usage Guide
 
 The library contains the Python code used for model training and prediction.
-For library usage, you can find its documentation [here](https://github.com/Zenika/zihub/blob/master/lib/README.md).
+For library usage, you can find its documentation [here](https://github.com/zenika-open-source/zevision/tree/master/lib).
 
 # API Usage Guide
 
 The API allows access to the different features of the Library.
-For the server API usage and the available endpoints, you can find its documentation [here](https://github.com/Zenika/zihub/blob/master/api/README.md)
+For the server API usage and the available endpoints, you can find its documentation [here](https://github.com/zenika-open-source/zevision/tree/master/api)

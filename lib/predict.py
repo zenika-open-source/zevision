@@ -417,12 +417,12 @@ def recognize(encodings, boxes,data):
 def draw_boxes(read_image,response):
     for (i,r) in enumerate(response):
         #print("\n \n the number ",i+1," prediction  is  :   ",r)
-        a = r["box"][0]*255
+        a = int(r["box"][0]*255)
         print(a)
-        b = r["box"][1]*255
+        b = int(r["box"][1]*255)
         print(b)
-        c = r["box"][2]*255
-        d = r["box"][3]*255
+        c = int(r["box"][2]*255)
+        d = int(r["box"][3]*255)
         box = dlib.rectangle(a, b, c, d)
         top = box.top()
         right = box.right()

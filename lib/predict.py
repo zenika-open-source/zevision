@@ -56,7 +56,7 @@ def detection_method(method):
 def load_frame_into_numpy_array(image):
     print(image.shape[:2])
     (im_height,im_width) = image.shape[:2]
-    return np.array(image.getdata()).reshape((im_height, im_width, 3)).astype(np.uint8)
+    return np.array(image).reshape((im_height, im_width, 3)).astype(np.uint8)
 
 
 

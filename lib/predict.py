@@ -57,7 +57,6 @@ def detection_method(method):
 ####################################################################################################################
 
 def load_frame_into_numpy_array(image):
-    print(image.shape[:2])
     (im_height,im_width) = image.shape[:2]
     return np.array(image).reshape((im_height, im_width, 3)).astype(np.uint8)
 
@@ -65,7 +64,6 @@ def load_frame_into_numpy_array(image):
 
 
 def load_image_into_numpy_array(image):
-    print(image.size)
     (im_width, im_height) = image.size
     return np.array(image.getdata()).reshape((im_height, im_width, 3)).astype(np.uint8)
 
@@ -192,6 +190,7 @@ def draw_bounding_box_on_image_array(image,ymin,xmin,ymax,xmax,color='red',thick
                                        thickness, display_str_list,
                                        use_normalized_coordinates)
     np.copyto(image, np.array(image_pil))
+    return image
 
 def draw_bounding_box_on_image(image,ymin,xmin,ymax,xmax,color='red',thickness=4,display_str_list=(),
                                use_normalized_coordinates=True):
@@ -308,7 +307,7 @@ def draw_bounding_boxes_on_image_array(image,boxes,color='red',thickness=4,displ
 def draw_object_boxes(frame,response):
     image_np = load_frame_into_numpy_array(frame)
     for r in response :
-        draw_bounding_box_on_image_array(image_np,r['box'][0],r['box'][1],r['box'][2],r['box'][3],display_str_list=(r['category']))
+        image_np = draw_bounding_box_on_image_array(image_np,r['box'][0],r['box'][1],r['box'][2],r['box'][3],display_str_list=(r['category']))
 
 
 

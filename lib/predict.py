@@ -158,7 +158,7 @@ def recognize_objects_frame(frame):
     output_dict = run_inference_for_single_image(image_np_expanded, default_object_detector)
     
     output = organize_object_prediction(output_dict,default_object_labels)
-    print(output)
+    
     return output
 
 
@@ -519,6 +519,7 @@ def recognize_camera (src=0,method="hog",encoding_path=default_path_encodings,re
         #response = common_recognize_frame(frame)
         faces = recognize_frame(frame)
         objects = recognize_objects_frame(frame)
+        print(objects)
         frame = draw_boxes(frame,faces)
         draw_object_boxes(frame,objects)
         cv2.imshow("Frame", frame)

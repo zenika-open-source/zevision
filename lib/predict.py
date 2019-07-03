@@ -160,74 +160,6 @@ def recognize_objects_frame(frame):
     return output
 
 
-
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
                       
                       
                       #End of object recognition
@@ -337,6 +269,25 @@ def draw_boxes(read_image,response):
                     0.75, (0, 255, 0), 2)
     return read_image
 
+
+def draw_object_boxes(read_image,response):
+    for (i,r) in enumerate(response):
+        #print("\n \n the number ",i+1," prediction  is  :   ",r)
+        #box = dlib.rectangle(r["box"][3], r["box"][0], r["box"][1], r["box"][2])
+        top = r["box"][3]
+        right = r["box"][0]
+        bottom = r["box"][1]
+        left = r["box"][2]
+        cv2.rectangle(read_image, (left, top), (right, bottom), (255, 0, 0), 2)
+        y = top - 15 if top - 15 > 15 else top + 15
+        cv2.putText(read_image, r["category"], (left, y), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.75, (255, 0, 0), 2)
+    return read_image
+
+
+
+
+
 def save_image(image_path,drawn_image,path_to_results=""):
     image_name = image_path.split("/")[-1].split(".")[0]
     cv2.imwrite(path_to_results + image_name + ".jpg", drawn_image)
@@ -377,7 +328,7 @@ def recognize_face(image,method="hog",encoding_path=default_path_encodings):
 
 
 
-def common_recognize_frame (frame):
+def common_recognize_frame(frame):
     faces = recognize_frame(frame)
     objects = recognize_objects_frame(frame)
     final_response = faces + objects
@@ -406,8 +357,11 @@ def recognize_camera (src=0,method="hog",encoding_path=default_path_encodings,re
     while True:
         # grab the frame from the threaded video stream
         frame = vs.read()
-        response = common_recognize_frame(frame)
-        draw_boxes(frame,response)
+        #response = common_recognize_frame(frame)
+        faces = recognize_frame(frame)
+        objects = recognize_objects_frame(frame)
+        frame = draw_boxes(frame,faces)
+        frame = draw_object_boxes(frame,objects)
         cv2.imshow("Frame", frame)
         # Write the video in a the zevision/test/results/
         if record_path != None:

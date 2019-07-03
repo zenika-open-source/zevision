@@ -417,11 +417,15 @@ def recognize(encodings, boxes,data):
 def draw_boxes(read_image,response):
     for (i,r) in enumerate(response):
         #print("\n \n the number ",i+1," prediction  is  :   ",r)
-        box = dlib.rectangle(r["box"][3], r["box"][0], r["box"][1], r["box"][2])
-        top = box.top()*255
-        right = box.right()*255
-        bottom = box.bottom()*255
-        left = box.left()*255
+        a = r["box"][0]*255
+        b = r["box"][1]*255
+        c = r["box"][2]*255
+        d = r["box"][3]*255
+        box = dlib.rectangle(a, b, c, d)
+        top = box.top()
+        right = box.right()
+        bottom = box.bottom()
+        left = box.left()
         cv2.rectangle(read_image, (left, top), (right, bottom), (0, 255, 0), 2)
         y = top - 15 if top - 15 > 15 else top + 15
         cv2.putText(read_image, r["category"], (left, y), cv2.FONT_HERSHEY_SIMPLEX,
@@ -513,7 +517,7 @@ def recognize_camera (src=0,method="hog",encoding_path=default_path_encodings,re
     frame = vs.read()
     if record_path != None:
         fourcc = cv2.VideoWriter_fourcc(*"MJPG")
-        writer = cv2.VideoWriter(record_path, fourcc, 5,(frame.shape[1], frame.shape[0]), True)
+        writer = cv2.VideoWriter(record_path, fourcc, 1,(frame.shape[1], frame.shape[0]), True)
     # loop over frames from the video file stream
     while True:
         # grab the frame from the threaded video stream

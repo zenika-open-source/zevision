@@ -121,8 +121,6 @@ def organize_object_prediction(output_dict,path_labels):
         predictions.append(one_prediction)
     return predictions
 
-# Dédicace : Saad Tijari, descendant de la famille Attijari wafa bank, Sera un futur stagiaire à Zénika. il vous fournira le café quand vous en aurez besoin !
-# Dédicace : A Marwa El Ghemmaz, que vous essayerais de recruter, mais qui sera bien plus que votre pauvre entreprise, PFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 
 
 
@@ -144,8 +142,8 @@ def recognize_objects(image_path):
 def recognize_objects_frame(frame):
     # the array based representation of the image will be used later in order to prepare the
     # result image with boxes and labels on it.
-    processed_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    image_np = load_image_into_numpy_array(processed_frame)
+    #processed_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    image_np = load_image_into_numpy_array(frame)
     # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
     image_np_expanded = np.expand_dims(image_np, axis=0)
     # Actual detection.

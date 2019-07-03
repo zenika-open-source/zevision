@@ -281,7 +281,7 @@ def draw_object_boxes(read_image,response):
         cv2.rectangle(read_image, (left, top), (right, bottom), (255, 0, 0), 2)
         y = top - 15 if top - 15 > 15 else top + 15
         cv2.putText(read_image, r["category"], (left, y), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.75, (255, 0, 0), 2)
+                    1, (255, 0, 0), 2)
     return read_image
 
 

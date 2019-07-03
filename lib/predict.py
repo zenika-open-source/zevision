@@ -158,7 +158,7 @@ def recognize_objects_frame(frame):
     output_dict = run_inference_for_single_image(image_np_expanded, default_object_detector)
     
     output = organize_object_prediction(output_dict,default_object_labels)
-    
+    print(output)
     return output
 
 

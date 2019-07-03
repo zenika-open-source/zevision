@@ -126,7 +126,8 @@ def organize_object_prediction(output_dict,path_labels):
         index = output_dict['detection_classes'][i]
         category = labels[index]
         one_prediction = {"category" : category, "precision" : output_dict['detection_scores'][i],"box" : output_dict['detection_boxes'][i]}
-        predictions.append(one_prediction)
+        if one_prediction['precision'] > 0.5 :
+            predictions.append(one_prediction)
     return predictions
 
 

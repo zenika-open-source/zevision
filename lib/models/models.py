@@ -23,7 +23,7 @@ global hog_face_detector
 hog_face_detector = dlib.get_frontal_face_detector()
 
 # Object detection inception model
-inception_path = directory + "/frozen_inception_objects.pb"
+inception_path = directory + "/frozen_mobilenet_graph.pb"
 
 inception_graph = load_graph(inception_path)
 global inception_object_detector

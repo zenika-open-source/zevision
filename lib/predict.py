@@ -53,6 +53,13 @@ def detection_method(method):
 ####################################################################################################################
 ####################################################################################################################
 
+def load_frame_into_numpy_array(image):
+    print(image.shape[:2])
+    (im_height,im_width) = image.shape[:2]
+    return np.array(image.getdata()).reshape((im_height, im_width, 3)).astype(np.uint8)
+
+
+
 
 def load_image_into_numpy_array(image):
     print(image.size)
@@ -143,7 +150,7 @@ def recognize_objects_frame(frame):
     # the array based representation of the image will be used later in order to prepare the
     # result image with boxes and labels on it.
     #processed_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    image_np = load_image_into_numpy_array(frame)
+    image_np = load_frame_into_numpy_array(frame)
     # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
     image_np_expanded = np.expand_dims(image_np, axis=0)
     # Actual detection.

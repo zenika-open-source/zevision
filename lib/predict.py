@@ -516,12 +516,12 @@ def recognize_camera (src=0,method="hog",encoding_path=default_path_encodings,re
     while True:
         # grab the frame from the threaded video stream
         frame = vs.read()
-        #response = common_recognize_frame(frame)
-        faces = recognize_frame(frame)
-        objects = recognize_objects_frame(frame)
-        print(objects)
-        frame = draw_boxes(frame,faces)
-        draw_object_boxes(frame,objects)
+        response = common_recognize_frame(frame)
+        #faces = recognize_frame(frame)
+        #objects = recognize_objects_frame(frame)
+        #print(objects)
+        frame = draw_boxes(frame,response)
+        #draw_object_boxes(frame,objects)
         cv2.imshow("Frame", frame)
         # Write the video in a the zevision/test/results/
         if record_path != None:

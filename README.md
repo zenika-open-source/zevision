@@ -1,5 +1,5 @@
-# Face-recognition tool
-This project provides an API for face detection and recognition.
+# Face-recognition & Object detection tool
+This project provides an API for face detection and recognition, and object detection in images.
 
 It allows for the training of a new model, updating the model and using the model.
 

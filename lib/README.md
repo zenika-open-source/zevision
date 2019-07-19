@@ -39,7 +39,7 @@ This function enables to train/retrain the face recognition model on new identit
 
 ```python
 
-import zihub.lib.train as train
+import zevision.lib.train as train
 train.train_model(pathToFolder)
 
 ```
@@ -65,7 +65,7 @@ This function enables to recognize the identities of all the faces in an image, 
 
 ```python
 
-import zihub.lib.predict as predict
+import zevision.lib.predict as predict
 response = predict.recognize_face(imagePath)
 
 ```
@@ -91,6 +91,44 @@ response = predict.recognize_face(imagePath)
 - box : coordinates of the face box in the image, in the format `(right,bottom,left,top)`
 
 ***Important :*** The output of the `recognize_face` function is a list containing the JSON. In the case of multiple faces in the image, the list contains multiple JSON, respectively for each face.
+
+
+`recognize_objects(imagePath)` :
+
+This function enables to recognize the classes of all objects in an image, trained on 80 classic object of the COCO dataset. It takes as arguments :
+
+- imagePath : the path of the image on the disk
+
+
+
+```python
+
+import zevision.lib.predict as predict
+response = predict.recognize_objects(imagePath)
+
+```
+
+##### Output
+
+
+
+```json
+
+[{
+  "category" : "laptop",
+  "precision" : 0.72,
+  "box" : [67, 24, 120, 150]
+}]
+
+```
+
+- category : class of the recognized object. 
+
+- precision : Probability of the prediction
+
+- box : coordinates of the object box in the image, in the format `(right,bottom,left,top)`
+
+***Important :*** The output of the `recognize_objects` function is a list containing the JSON. In the case of multiple objects in the image, the list contains multiple JSON, respectively for each object.
 
 
 ### Training Flow :

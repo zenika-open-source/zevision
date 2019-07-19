@@ -238,9 +238,11 @@ def draw_bounding_box_on_image(image,ymin,xmin,ymax,xmax,color='red',thickness=4
     total_display_str_height = (1 + 2 * 0.05) * sum(display_str_heights)
             
     if top > total_display_str_height:
-        text_bottom = top
+        #text_bottom = top
+        text_bottom = bottom
     else:
-        text_bottom = bottom + total_display_str_height
+        #text_bottom = bottom + total_display_str_height
+        text_bottom = bottom
     # Reverse list and print from bottom to top.
     for display_str in display_str_list[::-1]:
         text_width, text_height = font.getsize(display_str)
@@ -312,7 +314,13 @@ def draw_object_boxes(frame,response):
 
 
 
+def draw_object_boxes_image(image,response):
+    
+    image_np = load_image_into_numpy_array(image)
 
+    for r in response :
+        image_np = draw_bounding_box_on_image_array(image_np,r['box'][0],r['box'][1],r['box'][2],r['box'][3],display_str_list=([r['category']]))
+    return image_np
 
 
 
@@ -419,9 +427,9 @@ def draw_boxes(read_image,response):
     for (i,r) in enumerate(response):
         #print("\n \n the number ",i+1," prediction  is  :   ",r)
         a = int(r["box"][0]*255)
-        print(a)
+        #print(a)
         b = int(r["box"][1]*255)
-        print(b)
+        #print(b)
         c = int(r["box"][2]*255)
         d = int(r["box"][3]*255)
         box = dlib.rectangle(a, b, c, d)

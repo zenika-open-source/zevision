@@ -1,14 +1,39 @@
 import cv2
 import dlib
 import os
+import tensorflow as tf
 
 #def init():
+
+
+def load_graph(frozen_graph_filename):
+    detection_graph = tf.Graph()
+    with detection_graph.as_default():
+        od_graph_def = tf.GraphDef()
+        with tf.gfile.GFile(frozen_graph_filename, 'rb') as fid:
+            serialized_graph = fid.read()
+            od_graph_def.ParseFromString(serialized_graph)
+            tf.import_graph_def(od_graph_def, name='')
+    return detection_graph
 
 directory = os.path.dirname(os.path.abspath(__file__))
 
     # Hog method face detector
 global hog_face_detector
 hog_face_detector = dlib.get_frontal_face_detector()
+
+# Object detection inception model
+inception_path = directory + "/frozen_mobilenet_graph.pb"
+
+inception_graph = load_graph(inception_path)
+global inception_object_detector
+inception_object_detector = inception_graph
+
+# Object detection labels
+label_path = directory + "/labels.txt"
+global object_labels
+object_labels = label_path
+
 
     	# Haar Cascades method face detector
 global haar_face_detector

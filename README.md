@@ -1,26 +1,29 @@
-# Face-recognition & Object detection tool
-This project provides an API for face detection and recognition, and object detection in images.
+# Face analysis & Object detection API
 
-It allows for the training of a new model, updating the model and using the model.
+This project provides an API for face detection, sentiment analysis and object detection that can be easily used by developers in custom-made applications.
 
-The tool combines a Python library, a server and a docker container ready for usage by developers and companies. It can be installed either on the machine or using a docker container.
+The models are based on state of the art computer vision libraries.
+
+A REST API allows for the training and usage of the models.
+
+It runs eithers locally on the machine or in a docker container.
 
 ### Environnement Setup & Installation
 
-#### Local
+#### Locally
 On a Ubuntu 16.04 terminal, while in the repository's directory, launch `sudo bash setup.sh`, installation of all necessary tools would be underway after you enter your root password.
 
-Support for Windows and MacOS will be coming soon.
+Support for Windows and MacOS coming soon.
 
 #### Using Docker
-TODO
+In progress
 
 ### Library Usage Guide
 
 The library contains the Python code used for model training and prediction.
-For library usage, you can find its documentation [here](https://github.com/zenika-open-source/zevision/tree/master/lib).
+Library usage and documentation [here](https://github.com/zenika-open-source/zevision/tree/master/lib).
 
 # API Usage Guide
 
-The API allows access to the different features of the Library.
-For the server API usage and the available endpoints, you can find its documentation [here](https://github.com/zenika-open-source/zevision/tree/master/api)
+The API allows access to the different features of the library.
+API usage and documentation [here](https://github.com/zenika-open-source/zevision/tree/master/api)

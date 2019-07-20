@@ -1,5 +1,7 @@
 numpy
+pillow
 dlib
+pillow
 opencv-python
 pandas
 tensorflow

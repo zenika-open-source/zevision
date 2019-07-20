@@ -18,7 +18,7 @@ Support for Windows and MacOS coming soon.
 #### Using Docker
 In progress
 
-### Library Usage Guide
+# Library Usage Guide
 
 The library contains the Python code used for model training and prediction.
 Library usage and documentation [here](https://github.com/zenika-open-source/zevision/tree/master/lib).

@@ -311,6 +311,7 @@ def draw_object_boxes(frame,response):
     image_np = load_frame_into_numpy_array(frame)
     for r in response :
         image_np = draw_bounding_box_on_image_array(image_np,r['box'][0],r['box'][1],r['box'][2],r['box'][3],display_str_list=(r['category']))
+    return image_np
 
 
 
@@ -533,12 +534,12 @@ def recognize_camera (src=0,method="hog",encoding_path=default_path_encodings,re
     while True:
         # grab the frame from the threaded video stream
         frame = vs.read()
-        response = common_recognize_frame(frame)
-        #faces = recognize_frame(frame)
-        #objects = recognize_objects_frame(frame)
+        #response = common_recognize_frame(frame)
+        faces = recognize_frame(frame)
+        objects = recognize_objects_frame(frame)
         #print(objects)
         frame = draw_boxes(frame,response)
-        #draw_object_boxes(frame,objects)
+        draw_object_boxes(frame,objects)
         cv2.imshow("Frame", frame)
         # Write the video in a the zevision/test/results/
         if record_path != None:

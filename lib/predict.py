@@ -12,6 +12,7 @@ import PIL.ImageColor as ImageColor
 import PIL.ImageDraw as ImageDraw
 import PIL.ImageFont as ImageFont
 import tensorflow as tf
+from multiprocessing import Process
 
 
 # Gotta create a proper pipeline for the data flow of object and face recognition !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -426,14 +427,7 @@ def recognize(encodings, boxes,data):
 
 def draw_boxes(read_image,response):
     for (i,r) in enumerate(response):
-        #print("\n \n the number ",i+1," prediction  is  :   ",r)
-        a = int(r["box"][0]*255)
-        #print(a)
-        b = int(r["box"][1]*255)
-        #print(b)
-        c = int(r["box"][2]*255)
-        d = int(r["box"][3]*255)
-        box = dlib.rectangle(a, b, c, d)
+        box = dlib.rectangle(r["box"][3], r["box"][0], r["box"][1], r["box"][2])
         top = box.top()
         right = box.right()
         bottom = box.bottom()
@@ -536,10 +530,11 @@ def recognize_camera (src=0,method="hog",encoding_path=default_path_encodings,re
         frame = vs.read()
         #response = common_recognize_frame(frame)
         faces = recognize_faces_frame(frame)
+        print(faces)
         frame = draw_boxes(frame,faces)
 
-        objects = recognize_objects_frame(frame)
-        draw_object_boxes(frame,objects)
+        #objects = recognize_objects_frame(frame)
+        #draw_object_boxes(frame,objects)
         cv2.imshow("Frame", frame)
         # Write the video in a the zevision/test/results/
         if record_path != None:

@@ -308,21 +308,21 @@ def draw_bounding_boxes_on_image_array(image,boxes,color='red',thickness=4,displ
     np.copyto(image, np.array(image_pil))
 ########################
 
-def draw_object_boxes(frame,response):
-    image_np = load_frame_into_numpy_array(frame)
-    for r in response :
-        image_np = draw_bounding_box_on_image_array(image_np,r['box'][0],r['box'][1],r['box'][2],r['box'][3],display_str_list=(r['category']))
-    return image_np
+#def draw_object_boxes(frame,response):
+#    image_np = load_frame_into_numpy_array(frame)
+#    for r in response :
+#        image_np = draw_bounding_box_on_image_array(image_np,r['box'][0],r['box'][1],r['box'][2],r['box'][3],display_str_list=(r['category']))
+#    return image_np
 
 
 
-def draw_object_boxes_image(image,response):
+#def draw_object_boxes_image(image,response):
     
-    image_np = load_image_into_numpy_array(image)
+#    image_np = load_image_into_numpy_array(image)
 
-    for r in response :
-        image_np = draw_bounding_box_on_image_array(image_np,r['box'][0],r['box'][1],r['box'][2],r['box'][3],display_str_list=([r['category']]))
-    return image_np
+#    for r in response :
+#        image_np = draw_bounding_box_on_image_array(image_np,r['box'][0],r['box'][1],r['box'][2],r['box'][3],display_str_list=([r['category']]))
+#    return image_np
 
 
 
@@ -440,7 +440,7 @@ def draw_boxes(read_image,response):
 
 
 
-def draw_test_boxes(read_image,response):
+def draw_object_boxes(read_image,response):
     height , width = read_image.shape[:2]
     for (i,r) in enumerate(response):
         box = dlib.rectangle(int(r["box"][1]*width), int(r["box"][0]*height), int(r["box"][3]*width), int(r["box"][2]*height))
@@ -539,7 +539,7 @@ def recognize_camera (src=0,method="hog",encoding_path=default_path_encodings,re
         objects = recognize_objects_frame(frame)
         print(objects)
         print(time.time() - start_time)
-        frame = draw_test_boxes(frame,objects)
+        frame = draw_object_boxes(frame,objects)
         cv2.imshow("Frame", frame)
         # Write the video in a the zevision/test/results/
         if record_path != None:

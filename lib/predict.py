@@ -12,6 +12,7 @@ import PIL.ImageColor as ImageColor
 import PIL.ImageDraw as ImageDraw
 import PIL.ImageFont as ImageFont
 import tensorflow as tf
+from multiprocessing import Process, Queue
 
 
 # Gotta create a proper pipeline for the data flow of object and face recognition !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -307,20 +308,21 @@ def draw_bounding_boxes_on_image_array(image,boxes,color='red',thickness=4,displ
     np.copyto(image, np.array(image_pil))
 ########################
 
-def draw_object_boxes(frame,response):
-    image_np = load_frame_into_numpy_array(frame)
-    for r in response :
-        image_np = draw_bounding_box_on_image_array(image_np,r['box'][0],r['box'][1],r['box'][2],r['box'][3],display_str_list=(r['category']))
+#def draw_object_boxes(frame,response):
+#    image_np = load_frame_into_numpy_array(frame)
+#    for r in response :
+#        image_np = draw_bounding_box_on_image_array(image_np,r['box'][0],r['box'][1],r['box'][2],r['box'][3],display_str_list=(r['category']))
+#    return image_np
 
 
 
-def draw_object_boxes_image(image,response):
+#def draw_object_boxes_image(image,response):
     
-    image_np = load_image_into_numpy_array(image)
+#    image_np = load_image_into_numpy_array(image)
 
-    for r in response :
-        image_np = draw_bounding_box_on_image_array(image_np,r['box'][0],r['box'][1],r['box'][2],r['box'][3],display_str_list=([r['category']]))
-    return image_np
+#    for r in response :
+#        image_np = draw_bounding_box_on_image_array(image_np,r['box'][0],r['box'][1],r['box'][2],r['box'][3],display_str_list=([r['category']]))
+#    return image_np
 
 
 
@@ -425,14 +427,23 @@ def recognize(encodings, boxes,data):
 
 def draw_boxes(read_image,response):
     for (i,r) in enumerate(response):
-        #print("\n \n the number ",i+1," prediction  is  :   ",r)
-        a = int(r["box"][0]*255)
-        #print(a)
-        b = int(r["box"][1]*255)
-        #print(b)
-        c = int(r["box"][2]*255)
-        d = int(r["box"][3]*255)
-        box = dlib.rectangle(a, b, c, d)
+        box = dlib.rectangle(r["box"][3], r["box"][0], r["box"][1], r["box"][2])
+        top = box.top()
+        right = box.right()
+        bottom = box.bottom()
+        left = box.left()
+        cv2.rectangle(read_image, (left, top), (right, bottom), (0, 255, 0), 2)
+        y = top - 15 if top - 15 > 15 else top + 15
+        cv2.putText(read_image, r["category"], (left, y), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.75, (0, 255, 0), 2)
+    return read_image
+
+
+
+def draw_object_boxes(read_image,response):
+    height , width = read_image.shape[:2]
+    for (i,r) in enumerate(response):
+        box = dlib.rectangle(int(r["box"][1]*width), int(r["box"][0]*height), int(r["box"][3]*width), int(r["box"][2]*height))
         top = box.top()
         right = box.right()
         bottom = box.bottom()
@@ -446,30 +457,12 @@ def draw_boxes(read_image,response):
 
 
 
-#def draw_object_boxes(read_image,response):
-#   for (i,r) in enumerate(response):
-        #print("\n \n the number ",i+1," prediction  is  :   ",r)
-        #box = dlib.rectangle(r["box"][3], r["box"][0], r["box"][1], r["box"][2])
-        #       top = r["box"][3]
-        #        right = r["box"][0]
-        #      bottom = r["box"][1]
-        #      left = r["box"][2]
-        #      cv2.rectangle(read_image, (left, top), (right, bottom), (255, 0, 0), 2)
-        #     y = top - 15 if top - 15 > 15 else top + 15
-        #     cv2.putText(read_image, r["category"], (left, y), cv2.FONT_HERSHEY_SIMPLEX,
-        #               0.75, (255, 0, 0), 2)
-# return read_image
-
-
-
-
-
 def save_image(image_path,drawn_image,path_to_results=""):
     image_name = image_path.split("/")[-1].split(".")[0]
     cv2.imwrite(path_to_results + image_name + ".jpg", drawn_image)
 
 
-def recognize_frame(frame,method="hog",encoding_path=default_path_encodings):
+def recognize_faces_frame(frame,method="hog",encoding_path=default_path_encodings):
     if encoding_path == codes.default_encodings :
         data = default_encoding_data
     else :
@@ -504,11 +497,7 @@ def recognize_face(image,method="hog",encoding_path=default_path_encodings):
 
 
 
-def common_recognize_frame(frame):
-    faces = recognize_frame(frame)
-    objects = recognize_objects_frame(frame)
-    final_response = faces + objects
-    return final_response
+#def multi_thread_process_objects(q,frame):
 
 
 
@@ -524,21 +513,33 @@ def recognize_camera (src=0,method="hog",encoding_path=default_path_encodings,re
     time.sleep(2.0)
     # start the FPS throughput estimator
     #fps = FPS().start()
-    
+    fps = 1
+    #iterator for the object detection to be activated
+    #i = 0
+    #q = Queue()
     frame = vs.read()
     if record_path != None:
         fourcc = cv2.VideoWriter_fourcc(*"MJPG")
-        writer = cv2.VideoWriter(record_path, fourcc, 1,(frame.shape[1], frame.shape[0]), True)
+        writer = cv2.VideoWriter(record_path, fourcc, fps,(frame.shape[1], frame.shape[0]), True)
     # loop over frames from the video file stream
     while True:
         # grab the frame from the threaded video stream
         frame = vs.read()
-        response = common_recognize_frame(frame)
-        #faces = recognize_frame(frame)
-        #objects = recognize_objects_frame(frame)
-        #print(objects)
-        frame = draw_boxes(frame,response)
-        #draw_object_boxes(frame,objects)
+        #i += 1
+        #if i == fps :
+       #     i = 0
+        #response = common_recognize_frame(frame)
+        faces = recognize_faces_frame(frame)
+        print(faces)
+        print("\n\n\n")
+        frame = draw_boxes(frame,faces)
+# Do an iterator to make object detection work only once in multiple frames
+        #if i == 0 : 
+        start_time = time.time()
+        objects = recognize_objects_frame(frame)
+        print(objects)
+        print(time.time() - start_time)
+        frame = draw_object_boxes(frame,objects)
         cv2.imshow("Frame", frame)
         # Write the video in a the zevision/test/results/
         if record_path != None:

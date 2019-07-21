@@ -470,7 +470,7 @@ def save_image(image_path,drawn_image,path_to_results=""):
     cv2.imwrite(path_to_results + image_name + ".jpg", drawn_image)
 
 
-def recognize_frame(frame,method="hog",encoding_path=default_path_encodings):
+def recognize_faces_frame(frame,method="hog",encoding_path=default_path_encodings):
     if encoding_path == codes.default_encodings :
         data = default_encoding_data
     else :
@@ -535,10 +535,10 @@ def recognize_camera (src=0,method="hog",encoding_path=default_path_encodings,re
         # grab the frame from the threaded video stream
         frame = vs.read()
         #response = common_recognize_frame(frame)
-        faces = recognize_frame(frame)
+        faces = recognize_faces_frame(frame)
+        frame = draw_boxes(frame,faces)
+
         objects = recognize_objects_frame(frame)
-        #print(objects)
-        frame = draw_boxes(frame,response)
         draw_object_boxes(frame,objects)
         cv2.imshow("Frame", frame)
         # Write the video in a the zevision/test/results/

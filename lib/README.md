@@ -12,6 +12,7 @@ If you want to install them manually, you would need the following dependencies 
 
 - Python 3.x
 - numpy
+- Pillow
 - dlib
 - OpenCV-Python
 - pandas

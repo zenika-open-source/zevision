@@ -513,7 +513,7 @@ def recognize_camera (src=0,method="hog",encoding_path=default_path_encodings,re
     time.sleep(2.0)
     # start the FPS throughput estimator
     #fps = FPS().start()
-    fps = 1
+    fps = 20
     #iterator for the object detection to be activated
     #i = 0
     #q = Queue()

@@ -20,6 +20,14 @@ default_object_labels = models.object_labels
 default_object_detector = models.inception_object_detector
 
 
+
+
+
+def save_image(image_path,drawn_image,path_to_results=""):
+    image_name = image_path.split("/")[-1].split(".")[0]
+    cv2.imwrite(path_to_results + image_name + ".jpg", drawn_image)
+
+
 def recognize_objects(image_path):
     image = Image.open(image_path)
     # the array based representation of the image will be used later in order to prepare the
@@ -32,6 +40,21 @@ def recognize_objects(image_path):
 
     output = obj.organize_object_prediction(output_dict,default_object_labels)
     return output
+
+
+def draw_object_boxes(read_image,response):
+    height , width = read_image.shape[:2]
+    for (i,r) in enumerate(response):
+        box = dlib.rectangle(int(r["box"][1]*width), int(r["box"][0]*height), int(r["box"][3]*width), int(r["box"][2]*height))
+        top = box.top()
+        right = box.right()
+        bottom = box.bottom()
+        left = box.left()
+        cv2.rectangle(read_image, (left, top), (right, bottom), (0, 255, 0), 2)
+        y = top - 15 if top - 15 > 15 else top + 15
+        cv2.putText(read_image, r["category"], (left, y), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.75, (0, 255, 0), 2)
+    return read_image
 
 
 # train_model(folder, method ="hog",encoding_path=default_encoding_path
@@ -54,8 +77,8 @@ def predict_faces(image,method="hog",encoding_path=default_path_encodings):
 		data = codes.load_encodings(encoding_path)
 	processed_image = face.preprocess(image,method)
 	boxes = face.detect_face_boxes_prediction(processed_image,method)
-	raw_landmarks = face.detect_landmarks(processed_image,boxes)
-	encodings = face.encode(processed_image,raw_landmarks)
+	raw_landmarks = face.detect_landmarks_prediction(processed_image,boxes)
+	encodings = face.encode_prediction(processed_image,raw_landmarks)
 	response = face.recognize(encodings, boxes,data)
 	return response
 
@@ -76,24 +99,8 @@ def draw_face_boxes(read_image,response):
     return read_image
 
 
-def draw_object_boxes(read_image,response):
-    height , width = read_image.shape[:2]
-    for (i,r) in enumerate(response):
-        box = dlib.rectangle(int(r["box"][1]*width), int(r["box"][0]*height), int(r["box"][3]*width), int(r["box"][2]*height))
-        top = box.top()
-        right = box.right()
-        bottom = box.bottom()
-        left = box.left()
-        cv2.rectangle(read_image, (left, top), (right, bottom), (0, 255, 0), 2)
-        y = top - 15 if top - 15 > 15 else top + 15
-        cv2.putText(read_image, r["category"], (left, y), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.75, (0, 255, 0), 2)
-    return read_image
 
 
-def save_image(image_path,drawn_image,path_to_results=""):
-    image_name = image_path.split("/")[-1].split(".")[0]
-    cv2.imwrite(path_to_results + image_name + ".jpg", drawn_image)
 
 
 
@@ -187,4 +194,4 @@ if __name__ == '__main__':
     assert args.method in ALLOWED_METHODS, \
         '--method should be one of: [%s]. %s given.' % (', '.join(ALLOWED_METHODS), args.method)
 
-    train_model(args.data, args.method)
+    train_face_model(args.data, args.method)

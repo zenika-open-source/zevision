@@ -14,7 +14,17 @@ from imutils import paths
 
 default_path_encodings = codes.default_encodings
 default_encoding_data = codes.encoding_data
+def detection_method(method):
+	if method == "cnn":
+		face_detector = models.cnn_face_detector
+	elif method == "haar":
+		face_detector = models.haar_face_detector.detectMultiScale
+	elif method == "hog":
+		face_detector = models.hog_face_detector
+	else :
+		face_detector = None
 
+	return face_detector
 
 
 
@@ -46,17 +56,60 @@ def get_images(folder,method="hog"):
 	processedImages = process_raw_images(imagePaths,method)
 	return processedImages
 
-def detection_method(method):
-	if method == "cnn":
-		face_detector = models.cnn_face_detector
-	elif method == "haar":
-		face_detector = models.haar_face_detector.detectMultiScale
-	elif method == "hog":
-		face_detector = models.hog_face_detector
-	else :
-		face_detector = None
 
-	return face_detector
+def detect_face_boxes_training(img,method="hog"):
+	face_detector = detection_method(method)
+	boxes = []
+
+	raw_face_locations = face_detector(img["image"], 1)
+
+	for face in raw_face_locations :
+		rect_to_css = face.top(), face.right(), face.bottom(), face.left() # this is just for HOG, do it for the other methods too
+		boxes.append((max(rect_to_css[0], 0), min(rect_to_css[1], img["image"].shape[1]), min(rect_to_css[2], img["image"].shape[0]), max(rect_to_css[3], 0)))
+
+	return boxes
+
+
+def training_face_detection(images,method="hog"):
+	detected_images = []
+	for image in images :
+		boxes = detect_face_boxes_training(image,method)
+		for box in boxes:
+			detected_image = {"category" : image["category"], "raw":image["raw"],"box" : box}
+			detected_images.append(detected_image)
+	return detected_images
+
+
+# 3
+def detect_landmarks_training(images):
+	image_landmarks = []
+	for i in range(0,len(images)):
+		images[i]["box"] = dlib.rectangle(images[i]["box"][3], images[i]["box"][0], images[i]["box"][1], images[i]["box"][2])
+		images[i]["raw"] = cv2.cvtColor(images[i]["raw"], cv2.COLOR_BGR2RGB)
+		pose_predictor = models.pose_predictor_68_point
+
+		raw_landmark = pose_predictor(images[i]["raw"], images[i]["box"])
+		data = {"category":images[i]["category"],"raw":images[i]["raw"],"landmark":raw_landmark}
+		image_landmarks.append(data)
+	return image_landmarks
+
+# 4
+def encode_training_faces(images):
+
+	encodings=[]
+	for image in images :
+
+		encoding = np.array(models.face_encoder.compute_face_descriptor(image["raw"], image["landmark"],1))
+		data = {"category":image["category"],"encoding":encoding}
+		encodings.append(data)
+	return encodings
+
+
+
+
+
+
+
 
 
 
@@ -75,32 +128,6 @@ def preprocess_frame(frame,method="hog"):
     return processed_frame
 
 
-
-def training_face_detection(images,method="hog"):
-	detected_images = []
-	for image in images :
-		boxes = detect_face_boxes(image,method)
-		for box in boxes:
-			detected_image = {"category" : image["category"], "raw":image["raw"],"box" : box}
-			detected_images.append(detected_image)
-	return detected_images
-
-
-
-def detect_face_boxes(img,method="hog"):
-	face_detector = detection_method(method)
-	boxes = []
-
-	raw_face_locations = face_detector(img["image"], 1)
-
-	for face in raw_face_locations :
-		rect_to_css = face.top(), face.right(), face.bottom(), face.left() # this is just for HOG, do it for the other methods too
-		boxes.append((max(rect_to_css[0], 0), min(rect_to_css[1], img["image"].shape[1]), min(rect_to_css[2], img["image"].shape[0]), max(rect_to_css[3], 0)))
-
-	return boxes
-
-
-
 #2
 def detect_face_boxes_prediction(img,method="hog"):
 	face_detector = detection_method(method)
@@ -115,47 +142,22 @@ def detect_face_boxes_prediction(img,method="hog"):
 	return boxes
 
 
-
-# 3
-def detect_landmarks_training(images):
-	image_landmarks = []
-	for i in range(0,len(images)):
-		images[i]["box"] = dlib.rectangle(images[i]["box"][3], images[i]["box"][0], images[i]["box"][1], images[i]["box"][2])
-		images[i]["raw"] = cv2.cvtColor(images[i]["raw"], cv2.COLOR_BGR2RGB)
-		pose_predictor = models.pose_predictor_68_point
-
-		raw_landmark = pose_predictor(images[i]["raw"], images[i]["box"])
-		data = {"category":images[i]["category"],"raw":images[i]["raw"],"landmark":raw_landmark}
-		image_landmarks.append(data)
-	return image_landmarks
-
 #3
-def detect_landmarks(processed_image,boxes):
+def detect_landmarks_prediction(processed_image,boxes):
 	boxes = [dlib.rectangle(box[3], box[0], box[1], box[2]) for box in boxes]
 	pose_predictor = models.pose_predictor_68_point
 	raw_landmarks = [pose_predictor(processed_image, box) for box in boxes]
 	return raw_landmarks
 
 
-# 4
-def encode_training_faces(images):
-
-	encodings=[]
-	for image in images :
-
-		encoding = np.array(models.face_encoder.compute_face_descriptor(image["raw"], image["landmark"],1))
-		data = {"category":image["category"],"encoding":encoding}
-		encodings.append(data)
-	return encodings
-
 
 #4
-def encode(processed_image,raw_landmarks):
+def encode_prediction(processed_image,raw_landmarks):
 	encodings = [np.array(models.face_encoder.compute_face_descriptor(processed_image, raw_landmark_set,1)) for raw_landmark_set in raw_landmarks]
 	return encodings
 
 
-def recognize_simple(encoding,datas):
+def _recognize_simple(encoding,datas):
 	matches = []
 	for data in datas["data"] :
 		match = (classifier.face_distance(data["encoding"], encoding) <= 0.6)
@@ -190,7 +192,7 @@ def recognize(encodings, boxes,data):
 	response = []
 # loop over the facial embeddings
 	for (box,encoding) in zip(boxes,encodings):
-		category = recognize_simple(encoding,data)
+		category = _recognize_simple(encoding,data)
 		prediction = {"category":category["category"],"precision":category["precision"],"box":box}
 		response.append(prediction)
 	return response
@@ -203,7 +205,7 @@ def recognize_faces_frame(frame,method="hog",encoding_path=default_path_encoding
         data = codes.load_encodings(encoding_path)
     processed_frame = preprocess_frame(frame,method)
     boxes = detect_face_boxes_prediction(processed_frame,method)
-    raw_landmarks = detect_landmarks(processed_frame,boxes)
-    encodings = encode(processed_frame,raw_landmarks)
+    raw_landmarks = detect_landmarks_prediction(processed_frame,boxes)
+    encodings = encode_prediction(processed_frame,raw_landmarks)
     response = recognize(encodings, boxes,data)
     return response

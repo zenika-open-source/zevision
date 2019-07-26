@@ -4,7 +4,7 @@ import cv2
 from PIL import Image
 sys.path.insert(0, '/home/ihab/ihabgit/zevision')
 
-import lib.predict as predict
+import lib.util as predict
 imagePaths = list(paths.list_images("db_test"))
 
 for image in imagePaths:

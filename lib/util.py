@@ -3,25 +3,48 @@ import dlib
 import cv2
 import os
 import numpy as np
-import lib.models as models
-import lib.encodings.encodings as codes
+import lib.utils.models.models as models
+import lib.utils.encodings.encodings as codes
+import lib.utils.faces as face
+import lib.utils.objects as obj
 from imutils.video import VideoStream
 import time
 from PIL import Image
-import PIL.ImageColor as ImageColor
-import PIL.ImageDraw as ImageDraw
-import PIL.ImageFont as ImageFont
 import tensorflow as tf
-from multiprocessing import Process, Queue
 
-#recognize(encodings, boxes,data)
-def predict_faces(encodings, boxes,data):
-	response = []
-# loop over the facial embeddings
-	for (box,encoding) in zip(boxes,encodings):
-		category = recognize_simple(encoding,data)
-		prediction = {"category":category["category"],"precision":category["precision"],"box":box}
-		response.append(prediction)
+
+default_path_encodings = codes.default_encodings
+default_encoding_data = codes.encoding_data
+
+default_object_labels = models.object_labels
+default_object_detector = models.inception_object_detector
+
+
+def recognize_objects(image_path):
+    image = Image.open(image_path)
+    # the array based representation of the image will be used later in order to prepare the
+    # result image with boxes and labels on it.
+    image_np = obj.load_image_into_numpy_array(image)
+    # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
+    image_np_expanded = np.expand_dims(image_np, axis=0)
+    # Actual detection.
+    output_dict = obj.run_inference_for_single_image(image_np_expanded, default_object_detector)
+
+    output = obj.organize_object_prediction(output_dict,default_object_labels)
+    return output
+
+
+#recognize_face(image,method="hog",encoding_path=default_path_encodings)
+def predict_faces(image,method="hog",encoding_path=default_path_encodings):
+	if encoding_path == codes.default_encodings :
+		data = default_encoding_data
+	else :
+		data = codes.load_encodings(encoding_path)
+	processed_image = face.preprocess(image,method)
+	boxes = face.detect_face_boxes_prediction(processed_image,method)
+	raw_landmarks = face.detect_landmarks(processed_image,boxes)
+	encodings = face.encode(processed_image,raw_landmarks)
+	response = face.recognize(encodings, boxes,data)
 	return response
 
 
@@ -85,15 +108,15 @@ def launch_camera_feed (src=0,method="hog",encoding_path=default_path_encodings,
         #if i == fps :
        #     i = 0
         #response = common_recognize_frame(frame)
-        faces = recognize_faces_frame(frame)
+        faces = face.recognize_faces_frame(frame)
         print(faces)
         print("\n\n\n")
-        frame = draw_boxes(frame,faces)
+        frame = draw_face_boxes(frame,faces)
 # Do an iterator to make object detection work only once in multiple frames
         #if i == 0 : 
         start_time = time.time()
-        objects = recognize_objects_frame(frame)
-        print(objects)
+        objects = obj.recognize_objects_frame(frame)
+        #print(objects)
         print(time.time() - start_time)
         frame = draw_object_boxes(frame,objects)
         cv2.imshow("Frame", frame)

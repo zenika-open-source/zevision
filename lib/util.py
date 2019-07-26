@@ -1,4 +1,5 @@
 import imutils
+
 import dlib
 import cv2
 import os
@@ -32,6 +33,18 @@ def recognize_objects(image_path):
 
     output = obj.organize_object_prediction(output_dict,default_object_labels)
     return output
+
+
+# train_model(folder, method ="hog",encoding_path=default_encoding_path
+def train_face_model(folder, method ="hog",encoding_path=default_path_encodings):
+	processed_images = face.get_images(folder,method)
+	detected_images = face.training_face_detection(processed_images,method)
+	image_landmarks = face.detect_landmarks_training(detected_images)
+	encodings = face.encode_training_faces(image_landmarks)
+	# write the encodings in a file
+	codes.write_encodings(encodings,encoding_path)
+	codes.update()
+	print("End of training")
 
 
 #recognize_face(image,method="hog",encoding_path=default_path_encodings)
@@ -83,6 +96,15 @@ def save_image(image_path,drawn_image,path_to_results=""):
     image_name = image_path.split("/")[-1].split(".")[0]
     cv2.imwrite(path_to_results + image_name + ".jpg", drawn_image)
 
+
+
+
+
+
+
+
+
+
 #recognize_camera (src=0,method="hog",encoding_path=default_path_encodings,record_path=None)
 def launch_camera_feed (src=0,method="hog",encoding_path=default_path_encodings,record_path=None):
     # initialize the video stream, then allow the camera sensor to warm up
@@ -133,3 +155,37 @@ def launch_camera_feed (src=0,method="hog",encoding_path=default_path_encodings,
     # check to see if the video writer point needs to be released
     if writer is not None:
         writer.release()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## To be modified for usasge with API (tests still necessary) for both train and prediction with the function names adapted
+if __name__ == '__main__':
+
+    import argparse
+
+    DATA_RAW = 'data/raw'
+    METHOD = 'hog'
+    ALLOWED_METHODS = ['hog', 'haar', 'cnn']
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('-d', '--data', default=DATA_RAW,
+        help='Path to data folder. Default: %s' % DATA_RAW)
+    parser.add_argument('-m', '--method', default=METHOD,
+        help='Method used by the model. One of: [%s]. Default: %s' % (', '.join(ALLOWED_METHODS), METHOD))
+    args = parser.parse_args()
+
+    assert args.method in ALLOWED_METHODS, \
+        '--method should be one of: [%s]. %s given.' % (', '.join(ALLOWED_METHODS), args.method)
+
+    train_model(args.data, args.method)

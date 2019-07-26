@@ -6,6 +6,7 @@ import dlib
 import cv2
 import os
 import numpy as np
+from imutils import paths
 
 
 
@@ -14,6 +15,36 @@ import numpy as np
 default_path_encodings = codes.default_encodings
 default_encoding_data = codes.encoding_data
 
+
+
+
+
+def process_raw_images(imagePaths,method="hog"):
+	# loop over the image paths
+	processedImages = []
+	for (i, imagePath) in enumerate(imagePaths):
+		# extract the person name from the image path
+		print("[INFO] processing image {}/{}".format(i + 1,
+			len(imagePaths)))
+		name = imagePath.split(os.path.sep)[-2]
+
+		# load the input image and convert it from BGR (OpenCV ordering)
+		# to dlib ordering (RGB) or GRAY coloring for haar
+
+		image = cv2.imread(imagePath)
+		if method == "haar":
+			processed_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+		else:
+			processed_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+		data = {"category" : name, "raw":image,"image" : processed_image}
+		processedImages.append(data)
+	return processedImages
+
+# 1
+def get_images(folder,method="hog"):
+	imagePaths = list(paths.list_images(folder))
+	processedImages = process_raw_images(imagePaths,method)
+	return processedImages
 
 def detection_method(method):
 	if method == "cnn":
@@ -44,6 +75,32 @@ def preprocess_frame(frame,method="hog"):
     return processed_frame
 
 
+
+def training_face_detection(images,method="hog"):
+	detected_images = []
+	for image in images :
+		boxes = detect_face_boxes(image,method)
+		for box in boxes:
+			detected_image = {"category" : image["category"], "raw":image["raw"],"box" : box}
+			detected_images.append(detected_image)
+	return detected_images
+
+
+
+def detect_face_boxes(img,method="hog"):
+	face_detector = detection_method(method)
+	boxes = []
+
+	raw_face_locations = face_detector(img["image"], 1)
+
+	for face in raw_face_locations :
+		rect_to_css = face.top(), face.right(), face.bottom(), face.left() # this is just for HOG, do it for the other methods too
+		boxes.append((max(rect_to_css[0], 0), min(rect_to_css[1], img["image"].shape[1]), min(rect_to_css[2], img["image"].shape[0]), max(rect_to_css[3], 0)))
+
+	return boxes
+
+
+
 #2
 def detect_face_boxes_prediction(img,method="hog"):
 	face_detector = detection_method(method)
@@ -58,12 +115,39 @@ def detect_face_boxes_prediction(img,method="hog"):
 	return boxes
 
 
+
+# 3
+def detect_landmarks_training(images):
+	image_landmarks = []
+	for i in range(0,len(images)):
+		images[i]["box"] = dlib.rectangle(images[i]["box"][3], images[i]["box"][0], images[i]["box"][1], images[i]["box"][2])
+		images[i]["raw"] = cv2.cvtColor(images[i]["raw"], cv2.COLOR_BGR2RGB)
+		pose_predictor = models.pose_predictor_68_point
+
+		raw_landmark = pose_predictor(images[i]["raw"], images[i]["box"])
+		data = {"category":images[i]["category"],"raw":images[i]["raw"],"landmark":raw_landmark}
+		image_landmarks.append(data)
+	return image_landmarks
+
 #3
 def detect_landmarks(processed_image,boxes):
 	boxes = [dlib.rectangle(box[3], box[0], box[1], box[2]) for box in boxes]
 	pose_predictor = models.pose_predictor_68_point
 	raw_landmarks = [pose_predictor(processed_image, box) for box in boxes]
 	return raw_landmarks
+
+
+# 4
+def encode_training_faces(images):
+
+	encodings=[]
+	for image in images :
+
+		encoding = np.array(models.face_encoder.compute_face_descriptor(image["raw"], image["landmark"],1))
+		data = {"category":image["category"],"encoding":encoding}
+		encodings.append(data)
+	return encodings
+
 
 #4
 def encode(processed_image,raw_landmarks):

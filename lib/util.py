@@ -112,7 +112,7 @@ def draw_face_boxes(read_image,response):
 
 
 #recognize_camera (src=0,method="hog",encoding_path=default_path_encodings,record_path=None)
-def launch_camera_feed (src=0,method="hog",encoding_path=default_path_encodings,record_path=None):
+def launch_camera_feed (src=0,method="hog",encoding_path=default_path_encodings,record_path=None,pred="all"):
     # initialize the video stream, then allow the camera sensor to warm up
     print("[INFO] starting video stream...")
     vs = VideoStream(src).start()
@@ -132,21 +132,20 @@ def launch_camera_feed (src=0,method="hog",encoding_path=default_path_encodings,
     while True:
         # grab the frame from the threaded video stream
         frame = vs.read()
-        #i += 1
-        #if i == fps :
-       #     i = 0
-        #response = common_recognize_frame(frame)
-        faces = face.recognize_faces_frame(frame)
-        print(faces)
-        print("\n\n\n")
-        frame = draw_face_boxes(frame,faces)
-# Do an iterator to make object detection work only once in multiple frames
-        #if i == 0 : 
-        start_time = time.time()
-        objects = obj.recognize_objects_frame(frame)
-        #print(objects)
-        print(time.time() - start_time)
-        frame = draw_object_boxes(frame,objects)
+        if pred == "all" :
+            faces = face.recognize_faces_frame(frame)
+            frame = draw_face_boxes(frame,faces)
+            objects = obj.recognize_objects_frame(frame)
+            frame = draw_object_boxes(frame,objects)
+        elif pred == "obj" :
+            objects = obj.recognize_objects_frame(frame)
+            frame = draw_object_boxes(frame,objects)
+        elif pred == "face" :
+            faces = face.recognize_faces_frame(frame)
+            frame = draw_face_boxes(frame,faces)
+        else :
+            print("please specify in launch_camera_feed the type of recognition you need. The arguments are 'obj' for objects, 'face' for faces, and 'all' for both")
+            break
         cv2.imshow("Frame", frame)
         # Write the video in a the zevision/test/results/
         if record_path != None:

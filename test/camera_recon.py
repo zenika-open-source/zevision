@@ -5,4 +5,4 @@ sys.path.insert(0, '/home/ihab/ihabgit/zevision')
 import lib.util as predict
 
 
-predict.launch_camera_feed(record_path='/home/ihab/ihabgit/zevision/test/results/video/webcam_output.avi')
+predict.launch_camera_feed(record_path='/home/ihab/ihabgit/zevision/test/results/video/webcam_output.avi',pred='all')

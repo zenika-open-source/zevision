@@ -2,7 +2,7 @@
 
 Python library for face detection and face recognition tasks, following the method described in [this research paper](https://arxiv.org/abs/1503.03832).
 
-*Current library version : 0.1*
+*Current library version : 0.1.3*
 
 ### Environnement setup
 

@@ -2,6 +2,6 @@ import sys
 sys.path.insert(0, '/home/ihab/ihabgit/zevision')
 
 
-import lib.train as train
+import lib.util as train
 
-train.train_model("data/raw")
+train.train_face_model("data/raw")

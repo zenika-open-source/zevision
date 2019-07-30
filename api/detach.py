@@ -9,7 +9,7 @@ import os.path
 import json
 import os
 
-from lib.train import train_model
+from lib.util import train_face_model
 
 
 def wrap_train_model(RAW_DATA, LOG_PATH):
@@ -28,7 +28,7 @@ def wrap_train_model(RAW_DATA, LOG_PATH):
         res = subprocess.run(
             ['python3',
             '-m',
-            'lib.train',
+            'lib.util',
             '--data',
             RAW_DATA]
         )

@@ -18,7 +18,7 @@ import json
 import os
 
 from api.detach import wrap_train_model
-from lib.predict import recognize_face as predict
+from lib.util import predict_faces as predict
 
 
 # TODO: 423: Locked - another training is runing.

@@ -17,6 +17,7 @@ def load_graph(frozen_graph_filename):
     return detection_graph
 
 directory = os.path.dirname(os.path.abspath(__file__))
+print(directory)
 
     # Hog method face detector
 global hog_face_detector

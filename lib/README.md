@@ -22,7 +22,7 @@ If you want to install them manually, you would need the following dependencies 
 
 ### Library Usage Guide
 
-`train_model(folder, method ="hog")` :
+`train_face_model(folder, method ="hog")` :
 
 This function enables to train/retrain the face recognition model on new identities. It has as arguments :
 
@@ -40,14 +40,14 @@ This function enables to train/retrain the face recognition model on new identit
 
 ```python
 
-import zevision.lib.train as train
-train.train_model(pathToFolder)
+import zevision.lib.util as util
+util.train_face_model(pathToFolder)
 
 ```
 
 `recognize_face(imagePath,method="hog",db="lib/encodings/encodings.pickle")` :
 
-This function enables to recognize the identities of all the faces in an image, with the detection model trained with the `train_model` function. It takes as arguments :
+This function enables to recognize the identities of all the faces in an image, with the detection model trained with the `train_face_model` function. It takes as arguments :
 
 - imagePath : the path of the image on the disk
 
@@ -59,15 +59,15 @@ This function enables to recognize the identities of all the faces in an image, 
 
   - cnn : available only for GPU, based on neural networks
 
-***Recommended :*** It is recommended to use the same face detection method used to train the model with the `train_model` function, in order to achieve optimal precision results.
+***Recommended :*** It is recommended to use the same face detection method used to train the model with the `train_face_model` function, in order to achieve optimal precision results.
 
 - db : Path to the encodings of the identities unto which the model was trained. It is by default the path of the encodings of the latest trained model.
 
 
 ```python
 
-import zevision.lib.predict as predict
-response = predict.recognize_face(imagePath)
+import zevision.lib.util as util
+response = util.predict_faces(imagePath)
 
 ```
 
@@ -104,8 +104,8 @@ This function enables to recognize the classes of all objects in an image, train
 
 ```python
 
-import zevision.lib.predict as predict
-response = predict.recognize_objects(imagePath)
+import zevision.lib.util as util
+response = util.recognize_objects(imagePath)
 
 ```
 
@@ -129,12 +129,79 @@ response = predict.recognize_objects(imagePath)
 
 - box : coordinates of the object box in the image, in the format `(right,bottom,left,top)`
 
-***Important :*** The output of the `recognize_objects` function is a list containing the JSON. In the case of multiple objects in the image, the list contains multiple JSON, respectively for each object.
+
+
+`launch_camera_feed(src=0,method="hog",encoding_path=default_path_encodings,record_path=None,pred="all")` :
+
+Launches a camera feed to recognize faces or objects or both in a live video stream, with the option of saving it on disk. It takes as arguments :
+
+- src : frontal or back camera of the device. 0 for the frontal camera
+
+- method : face detection method, hog being the default
+
+- encoding_path : the path on disk for the encodings of face recognition
+
+- record_path : the path for storing the video, None by default, for which it will not be stored
+
+- pred : to choose whether object or face recognition or both. 'all' for both, 'obj' for objects only and 'face' for faces recognition only
+
+
+
+```python
+
+import zevision.lib.util as util
+util.launch_camera_feed()
+
+```
+
+
+
+`draw_face_boxes(read_image,response)` :
+
+This function enables to draw boxes on the image, for the recognized faces. It takes as arguments :
+
+- read_image : the image, in the openCV representation
+
+- response : the json response of the face recognition function
+
+
+```python
+
+import zevision.lib.util as util
+test_image = util.draw_face_boxes(test_image,response)
+
+```
+
+##### Output
+
+The image with drawn boxes for faces
+
+
+
+`draw_object_boxes(read_image,response)` :
+
+This function enables to draw boxes on the image, for the recognized objects. It takes as arguments :
+
+- read_image : the image, in the openCV representation
+
+- response : the json response of the object recognition function
+
+
+```python
+
+import zevision.lib.util as util
+test_image = util.draw_object_boxes(test_image,response)
+
+```
+
+##### Output
+
+The image with drawn boxes for objects
 
 
 ### Training Flow :
 
-Once the `train_model` function is called, the data goes through the following pipeline :
+Once the `train_face_model` function is called, the data goes through the following pipeline :
 
 ![training flowchart](resources/training_flow.png)
 

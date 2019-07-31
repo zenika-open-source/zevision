@@ -77,11 +77,11 @@ def predict_faces(image,method="hog",encoding_path=default_path_encodings):
 		data = codes.load_encodings(encoding_path)
 	processed_image = face.preprocess(image,method)
 	boxes = face.detect_face_boxes_prediction(processed_image,method)
-    emotion_response = face.detect_emotions(processed_image,boxes)
+	emotion_response = face.detect_emotions(processed_image,boxes)
 	raw_landmarks = face.detect_landmarks_prediction(processed_image,boxes)
 	encodings = face.encode_prediction(processed_image,raw_landmarks)
 	recognition_response = face.recognize(encodings, boxes,data)
-    response = face.match_face_emotion(recognition_response,emotion_response)
+	response = face.match_face_emotion(recognition_response,emotion_response)
 	return response
 
 

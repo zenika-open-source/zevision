@@ -146,25 +146,35 @@ def detect_face_boxes_prediction(img,method="hog"):
 	return boxes
 
 def detect_emotions(processed_image,boxes):
-    faces_emotions = []
-    for (x, y, w, h) in faces:
-        gray = cv2.cvtColor(processed_image, cv2.COLOR_BGR2GRAY)
-        roi_gray = gray[y:y + h, x:x + w]
-        cropped_img = np.expand_dims(np.expand_dims(cv2.resize(roi_gray, (48, 48)), -1), 0)
-        prediction = default_emotion_detector.predict(cropped_img)
-        maxindex = int(np.argmax(prediction))
-        emotion = default_emotion_dict[maxindex]
-        faces_emotions.append(emotion)
-    return faces_emotions
+	faces_emotions = []
+	for (x, y, w, h) in boxes:
+		gray = cv2.cvtColor(processed_image, cv2.COLOR_BGR2GRAY)
+		roi_gray = gray[y:y + h, x:x + w]
+		cropped_img = np.expand_dims(np.expand_dims(cv2.resize(roi_gray, (48, 48)), -1), 0)
+		prediction = default_emotion_detector.predict(cropped_img)
+		maxindex = int(np.argmax(prediction))
+		emotion = default_emotion_dict[maxindex]
+		faces_emotions.append(emotion)
+	return faces_emotions
 
 
 
 def match_face_emotion(recognition_response,emotion_response):
-    response = []
-    for emotion,recognition in emotion_response,recognition_response :
-        res = {"category":recognition["category"],"precision":recognition["precision"],"box":recognition["box"],"emotion":emotion}
-        response.append(res)
-    return response
+	response = []
+	print(recognition_response)
+	for i in range (0,min(len(recognition_response),len(emotion_response))):
+		
+
+		res = {"category":recognition_response[i]["category"],"precision":recognition_response[i]["precision"],"box":recognition_response[i]["box"],"emotion":emotion_response[i]}
+
+		response.append(res)
+	for j in range (min(len(recognition_response),len(emotion_response)),max(len(recognition_response),len(emotion_response))):
+		if max(len(recognition_response),len(emotion_response)) == len(recognition_response) :
+			res = recognition_response[j]
+		elif max(len(recognition_response),len(emotion_response)) == len(emotion_response) :
+			res = emotion_response[j]
+		response.append(res)
+	return response
 
 #3
 def detect_landmarks_prediction(processed_image,boxes):

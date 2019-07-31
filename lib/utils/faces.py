@@ -14,6 +14,10 @@ from imutils import paths
 
 default_path_encodings = codes.default_encodings
 default_encoding_data = codes.encoding_data
+
+default_emotion_detector = models.emotion_detector
+default_emotion_dict = models.emotion_dict
+
 def detection_method(method):
 	if method == "cnn":
 		face_detector = models.cnn_face_detector
@@ -141,6 +145,26 @@ def detect_face_boxes_prediction(img,method="hog"):
 
 	return boxes
 
+def detect_emotions(processed_image,boxes):
+    faces_emotions = []
+    for (x, y, w, h) in faces:
+        gray = cv2.cvtColor(processed_image, cv2.COLOR_BGR2GRAY)
+        roi_gray = gray[y:y + h, x:x + w]
+        cropped_img = np.expand_dims(np.expand_dims(cv2.resize(roi_gray, (48, 48)), -1), 0)
+        prediction = default_emotion_detector.predict(cropped_img)
+        maxindex = int(np.argmax(prediction))
+        emotion = default_emotion_dict[maxindex]
+        faces_emotions.append(emotion)
+    return faces_emotions
+
+
+
+def match_face_emotion(recognition_response,emotion_response):
+    response = []
+    for emotion,recognition in emotion_response,recognition_response :
+        res = {"category":recognition["category"],"precision":recognition["precision"],"box":recognition["box"],"emotion":emotion}
+        response.append(res)
+    return response
 
 #3
 def detect_landmarks_prediction(processed_image,boxes):

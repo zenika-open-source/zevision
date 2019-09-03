@@ -5,6 +5,7 @@ pillow
 opencv-python
 pandas
 tensorflow
+keras
 imutils
 Flask==1.0.2
 Flask-Testing==0.7.1
